@@ -1,7 +1,9 @@
 import requests
+import streamlit as st
 
 BASE_URL = "https://api.jolpi.ca/ergast/f1"
 
+@st.cache_data  
 def get_driver(driver_id):
     """
     Fetch driver information by driver ID.
