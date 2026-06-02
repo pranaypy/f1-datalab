@@ -35,14 +35,14 @@ if driver_name:
         col1, col2 = st.columns(2)
 
         with col1:
-            st.metric("First Name", driver["givenName"])
-            st.metric("Last Name", driver["familyName"])
-            st.metric("Nationality", driver["nationality"])
+            st.metric("First Name", driver.get("givenName", "N/A"))
+            st.metric("Last Name", driver.get("familyName", "N/A"))
+            st.metric("Nationality", driver.get("nationality", "N/A"))
 
         with col2:
-            st.metric("Driver ID", driver["driverId"])
-            st.metric("Number", driver["permanentNumber"])
-            st.metric("Code", driver["code"])
+            st.metric("Driver ID", driver.get("driverId", "N/A"))
+            st.metric("Number", driver.get("permanentNumber", "N/A"))
+            st.metric("Code", driver.get("code", "N/A"))
 
     else:
         st.error("Driver not found. Try: hamilton, verstappen, leclerc")
