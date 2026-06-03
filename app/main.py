@@ -4,7 +4,7 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from services.ergast_api import get_driver, search_driver_by_name
+from services.ergast_api import search_drivers
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -27,10 +27,14 @@ driver_name = st.text_input("Enter driver name (e.g. Lewis Hamilton)")
  
 if driver_name:
     with st.spinner("Searching..."):
-        driver = search_driver_by_name(driver_name)
+        matches = search_drivers(driver_name)
 
 
-    if driver:
+    if len(matches) == 0:
+        st.error("No driver found. Check the name and try again.")
+    
+    elif len(matches) == 1:
+        driver = matches[0]
         st.success(f"Driver found!")
         col1, col2 = st.columns(2)
 
@@ -45,5 +49,10 @@ if driver_name:
             st.metric("Code", driver.get("code", "N/A"))
 
     else:
-        st.error("Driver not found. Try: hamilton, verstappen, leclerc")
+        st.warning(f"Found {len(matches)} drivers matching **'{driver_name}'**. Please be more specific:")
+        for match in matches:
+            given = match.get("givenName", "")
+            family = match.get("familyName", "")
+            nationality = match.get("nationality", "")
+            st.write(f"• **{given} {family}** — {nationality}")
 
