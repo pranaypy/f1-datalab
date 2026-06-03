@@ -4,7 +4,7 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from services.ergast_api import get_driver
+from services.ergast_api import get_driver, search_driver_by_name
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -26,9 +26,9 @@ driver_name = st.text_input("Enter driver name (e.g. Lewis Hamilton)")
 
  
 if driver_name:
-    name_lst = driver_name.split()
-    driver_id = name_lst[1].lower()
-    driver = get_driver(driver_id)
+    with st.spinner("Searching..."):
+        driver = search_driver_by_name(driver_name)
+
 
     if driver:
         st.success(f"Driver found!")
