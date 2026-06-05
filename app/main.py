@@ -5,8 +5,7 @@ import datetime
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from services.ergast_api import search_drivers, get_driver_stats
-
+from services.ergast_api import search_drivers, get_driver_stats, get_driver_championships
 # --- Page Configuration ---
 st.set_page_config(
     page_title="DataLab.F1",
@@ -55,8 +54,9 @@ if driver_name:
 
         with st.spinner("Loading career stats..."):
             stats = get_driver_stats(driver.get("driverId"))
+            championships = get_driver_championships(driver.get("driverId"), stats["first_season"], stats["last_season"])
 
-        col3, col4, col5 = st.columns(3)
+        col3, col4, col5, col6 = st.columns(4)
 
         with col3:
             st.metric("Total Races", stats["total_races"])
@@ -69,7 +69,6 @@ if driver_name:
         with col5:
             st.metric("Total Points", stats["total_points"])
             st.metric("Seasons Active", stats["seasons_active"])
-        
         current_year = datetime.datetime.now().year
         last_season = int(stats["last_season"])
 
@@ -80,6 +79,9 @@ if driver_name:
         else:
             st.caption(f"Active: {stats['first_season']} — {stats['last_season']}")
 
+        with col6:
+            st.metric("🏆 Championships", championships)
+            st.metric("Fastest Laps", stats["fastest_laps"])
     else:
         st.warning(f"Found {len(matches)} drivers matching **'{driver_name}'**. Please be more specific:")
         for match in matches:

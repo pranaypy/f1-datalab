@@ -1,5 +1,6 @@
 import requests
 import streamlit as st
+import datetime
 
 BASE_URL = "https://api.jolpi.ca/ergast/f1"
 
@@ -93,6 +94,7 @@ def get_driver_stats(driver_id):
     wins = 0
     podiums = 0
     poles = 0
+    fastest_laps = 0
     total_points = 0
     seasons = set()  # set automatically removes duplicates
 
@@ -111,6 +113,10 @@ def get_driver_stats(driver_id):
         if grid == "1":
             poles += 1
 
+        fastest_lap_rank = result.get("FastestLap", {}).get("rank", "0")
+        if fastest_lap_rank == "1":
+            fastest_laps += 1
+
         total_points += points
         seasons.add(season)
 
@@ -120,7 +126,41 @@ def get_driver_stats(driver_id):
         "podiums": podiums,
         "poles": poles,
         "total_points": total_points,
+        "fastest_laps": fastest_laps,  
         "seasons_active": len(seasons),
         "first_season": min(seasons),
         "last_season": max(seasons)
     }
+
+@st.cache_data
+def get_driver_championships(driver_id, first_season, last_season):
+    """
+    Count how many championships a driver won by checking
+    each season's final standing.
+    """
+    championships = 0
+    current_year = datetime.datetime.now().year
+
+    for year in range(int(first_season), int(last_season) + 1):
+        # Don't check current year — season isn't finished
+        if year == current_year:
+            continue
+
+        url = f"{BASE_URL}/{year}/drivers/{driver_id}/driverStandings/"
+        response = requests.get(url, params={"limit": 1})
+
+        if response.status_code != 200:
+            continue
+
+        data = response.json()
+        standings = data["MRData"]["StandingsTable"]["StandingsLists"]
+
+        if not standings:
+            continue
+
+        position = standings[0]["DriverStandings"][0].get("position", "0")
+
+        if position == "1":
+            championships += 1
+
+    return championships
