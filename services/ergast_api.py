@@ -58,3 +58,69 @@ def search_drivers(query):
     return matches
 
 
+@st.cache_data
+def get_driver_stats(driver_id):
+    """
+    Fetch all race results for a driver and calculate career stats.
+    Uses pagination to get all results.
+    """
+    all_results = []
+    limit = 100
+    offset = 0
+
+    while True:
+        url = f"{BASE_URL}/drivers/{driver_id}/results/"
+        params = {"limit": limit, "offset": offset}
+        response = requests.get(url, params=params)
+
+        if response.status_code != 200:
+            break
+
+        data = response.json()
+        mrdata = data["MRData"]
+        races = mrdata["RaceTable"]["Races"]
+        total = int(mrdata["total"])
+
+        all_results.extend(races)
+
+        if len(all_results) >= total:
+            break
+
+        offset += limit
+
+    # Now calculate stats from all results
+    total_races = len(all_results)
+    wins = 0
+    podiums = 0
+    poles = 0
+    total_points = 0
+    seasons = set()  # set automatically removes duplicates
+
+    for race in all_results:
+        result = race["Results"][0]  # each race has a Results list, we want [0]
+        
+        position = result.get("position", "0")
+        grid = result.get("grid", "0")
+        points = float(result.get("points", "0"))
+        season = race.get("season", "")
+
+        if position == "1":
+            wins += 1
+        if position in ["1", "2", "3"]:
+            podiums += 1
+        if grid == "1":
+            poles += 1
+
+        total_points += points
+        seasons.add(season)
+
+    return {
+        "total_races": total_races,
+        "wins": wins,
+        "podiums": podiums,
+        "poles": poles,
+        "total_points": total_points,
+        "seasons_active": len(seasons),
+        "first_season": min(seasons),
+        "last_season": max(seasons)
+    }
