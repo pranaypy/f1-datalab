@@ -8,13 +8,13 @@ from services.ergast_api import search_drivers
 
 # --- Page Configuration ---
 st.set_page_config(
-    page_title="F1 DataLab",
+    page_title="DataLab.F1",
     page_icon="🏎️",
     layout="wide"
 )
 
 # --- Header ---
-st.title("🏎️ F1 DataLab")
+st.title("🏎️ Formula 1 DataLab")
 st.subheader("Formula 1 Driver Statistics and Analytics")
 
 # --- Divider ---
