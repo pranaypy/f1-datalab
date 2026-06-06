@@ -164,3 +164,37 @@ def get_driver_championships(driver_id, first_season, last_season):
             championships += 1
 
     return championships
+
+
+@st.cache_data
+def get_driver_season_stats(driver_id, first_season, last_season):
+    """
+    Get points and wins for each season a driver competed in.
+    Returns a list of dicts, one per season.
+    """
+    season_stats = []
+    current_year = datetime.datetime.now().year
+
+    for year in range(int(first_season), int(last_season) + 1):
+        url = f"{BASE_URL}/{year}/drivers/{driver_id}/driverStandings/"
+        response = requests.get(url, params={"limit": 1})
+
+        if response.status_code != 200:
+            continue
+
+        data = response.json()
+        standings = data["MRData"]["StandingsTable"]["StandingsLists"]
+
+        if not standings:
+            continue
+
+        standing = standings[0]["DriverStandings"][0]
+
+        season_stats.append({
+            "season": int(year),
+            "points": float(standing.get("points", 0)),
+            "wins": int(standing.get("wins", 0)),
+            "position": int(standing.get("position", 0))
+        })
+
+    return season_stats

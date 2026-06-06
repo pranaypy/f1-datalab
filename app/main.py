@@ -5,7 +5,9 @@ import datetime
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from services.ergast_api import search_drivers, get_driver_stats, get_driver_championships
+from services.ergast_api import search_drivers, get_driver_stats, get_driver_championships, get_driver_season_stats
+from visualizations.driver_charts import points_per_season_chart, wins_per_season_chart
+
 # --- Page Configuration ---
 st.set_page_config(
     page_title="DataLab.F1",
@@ -82,6 +84,31 @@ if driver_name:
         with col6:
             st.metric("🏆 Championships", championships)
             st.metric("Fastest Laps", stats["fastest_laps"])
+        
+        st.divider()
+        st.subheader("📈 Season Performance")
+
+        with st.spinner("Loading season data..."):
+            season_stats = get_driver_season_stats(
+                driver.get("driverId"),
+                stats["first_season"],
+                stats["last_season"]
+            )
+
+            if season_stats:
+                col_chart1, col_chart2 = st.columns(2)
+
+                with col_chart1:
+                    st.plotly_chart(
+                        points_per_season_chart(season_stats),
+                        width="stretch"
+                    )
+
+                with col_chart2:
+                    st.plotly_chart(
+                        wins_per_season_chart(season_stats),
+                        width="stretch"
+                    )
     else:
         st.warning(f"Found {len(matches)} drivers matching **'{driver_name}'**. Please be more specific:")
         for match in matches:
