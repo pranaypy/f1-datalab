@@ -16,7 +16,10 @@ st.set_page_config(
 )
 
 # --- Header ---
-st.title("🏎️ Formula 1 DataLab")
+st.markdown("""
+    <h1 style='color: #BF1200;'>🏎️ F1 DataLab</h1>
+    <p style='color: #AAAAAA; font-size: 18px;'>Formula 1 Driver Statistics and Analytics</p>
+""", unsafe_allow_html=True)
 st.subheader("Formula 1 Driver Statistics and Analytics")
 
 # --- Divider ---
