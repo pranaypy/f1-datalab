@@ -59,6 +59,8 @@ streamlit run app/main.py
 ---
 
 ## 📁 Project Structure
+
+```
 f1-datalab/
 ├── app/                  # Streamlit UI
 │   └── main.py
@@ -71,6 +73,7 @@ f1-datalab/
 ├── .streamlit/           # Theme config
 │   └── config.toml
 └── requirements.txt
+```
 
 ---
 
