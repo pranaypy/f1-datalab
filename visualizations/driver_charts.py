@@ -67,7 +67,7 @@ def wins_per_season_chart(season_stats):
         uniformtext_minsize=16,
         uniformtext_mode="hide",
         bargap=0.2,
-        hoverdistance=30,           # how close cursor needs to be
+        hoverdistance=10,           # how close cursor needs to be
         hovermode="x unified"       # smoother single tooltip following cursor
     )
 
