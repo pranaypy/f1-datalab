@@ -101,3 +101,5 @@ All F1 data is fetched from the
 
 Built by [@pranaypy](https://github.com/pranaypy)
 as a portfolio project to learn Python, APIs, and data visualization.
+
+🌐 **Live App:** [f1-datalab.streamlit.app](https://f1-datalab.streamlit.app)
